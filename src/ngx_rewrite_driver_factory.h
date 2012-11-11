@@ -25,6 +25,8 @@
 
 namespace net_instaweb {
 
+class AprMemCache;
+
 class NgxRewriteDriverFactory : public RewriteDriverFactory {
  public:
   NgxRewriteDriverFactory();
@@ -39,6 +41,8 @@ class NgxRewriteDriverFactory : public RewriteDriverFactory {
   virtual void SetupCaches(ServerContext* resource_manager);
   virtual Statistics* statistics();
 
+  // Create a new AprMemCache from the given hostname[:port] specification.
+  AprMemCache* NewAprMemCache(const GoogleString& spec);
  private:
   SimpleStats simple_stats_;
   Timer* timer_;

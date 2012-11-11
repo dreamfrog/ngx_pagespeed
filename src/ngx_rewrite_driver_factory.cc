@@ -39,8 +39,9 @@
 #include "net/instaweb/util/public/threadsafe_cache.h"
 
 //XXX: discuss the proper way to to this:
-#include "net/instaweb/apache/apr_thread_compatible_pool.cc"
-#include "net/instaweb/apache/serf_url_async_fetcher.cc"
+#include "net/instaweb/apache/apr_thread_compatible_pool.h"
+#include "net/instaweb/apache/serf_url_async_fetcher.h"
+#include "net/instaweb/apache/apr_mem_cache.h"
 
 namespace net_instaweb {
 
@@ -119,5 +120,15 @@ void NgxRewriteDriverFactory::SetupCaches(ServerContext* resource_manager) {
 Statistics* NgxRewriteDriverFactory::statistics() {
   return &simple_stats_;
 }
+
+AprMemCache* NgxRewriteDriverFactory::NewAprMemCache(
+    const GoogleString& spec) {
+  int thread_limit=1;
+  //ap_mpm_query(AP_MPMQ_HARD_LIMIT_THREADS, &thread_limit);
+  //thread_limit += num_rewrite_threads() + num_expensive_rewrite_threads();
+  return new AprMemCache(spec, thread_limit, hasher(), statistics(),
+                         timer(), message_handler());
+}
+
 
 }  // namespace net_instaweb
